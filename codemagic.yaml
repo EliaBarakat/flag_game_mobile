@@ -1,0 +1,25 @@
+workflows:
+  android-workflow:
+    name: Android Build
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    environment:
+      python: 3.10
+    scripts:
+      - name: Install dependencies
+        script: |
+          pip install --upgrade pip
+          pip install buildozer==1.5.0
+          pip install cython==0.29.33
+          
+      - name: Install system dependencies
+        script: |
+          brew install pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer
+          
+      - name: Build APK
+        script: |
+          buildozer init
+          buildozer android debug
+          
+    artifacts:
+      - build/**/*.apk
