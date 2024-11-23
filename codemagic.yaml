@@ -2,7 +2,7 @@ workflows:
   android-workflow:
     name: Android Build
     max_build_duration: 120
-    instance_type: ubuntu
+    instance_type: linux
     environment:
       groups:
         - keystore_credentials
