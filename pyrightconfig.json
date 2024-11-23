@@ -1,0 +1,5 @@
+{
+    "ignore": ["android_permissions.py"],
+    "reportMissingImports": false,
+    "typeCheckingMode": "off"
+}
