@@ -12,17 +12,46 @@ workflows:
       - name: Install dependencies
         script: |
           brew install python@3.10
+          brew install automake
+          brew install autoconf
+          brew install libtool
+          brew install pkg-config
+          brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer
+          brew install cmake
           python3 -m pip install --upgrade pip
           pip3 install buildozer==1.5.0
           pip3 install cython==0.29.33
+          pip3 install kivy==2.2.1
           
-      - name: Install system dependencies
+      - name: Create buildozer.spec
         script: |
-          brew install pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer
+          cat > buildozer.spec << EOF
+          [app]
+          title = Guess the Flag
+          package.name = guesstheflag
+          package.domain = org.test
+          source.dir = .
+          source.include_exts = py,png,jpg,kv,atlas,json
+          source.include_patterns = assets/*,data/*
+          version = 0.1
+          requirements = python3,kivy==2.2.1,pillow
+          orientation = portrait
+          android.archs = arm64-v8a
+          android.allow_backup = True
+          android.api = 33
+          android.minapi = 21
+          android.sdk = 33
+          android.ndk = 25b
+          android.accept_sdk_license = True
+          p4a.branch = master
+          
+          [buildozer]
+          log_level = 2
+          warn_on_root = 1
+          EOF
           
       - name: Build APK
         script: |
-          buildozer init
           buildozer android debug
           
     artifacts:
