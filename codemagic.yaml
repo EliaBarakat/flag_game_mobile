@@ -2,20 +2,64 @@ workflows:
   android-workflow:
     name: Android Build
     max_build_duration: 120
-    instance_type: linux
+    instance_type: ubuntu
     environment:
       groups:
         - keystore_credentials
       vars:
         PACKAGE_NAME: "org.test.guesstheflag"
     scripts:
-      - name: Pull Kivy Docker image
+      - name: Set up Python environment
         script: |
-          docker pull kivy/buildozer
+          sudo apt-get update
+          sudo apt-get install -y \
+            python3-pip \
+            build-essential \
+            git \
+            python3 \
+            python3-dev \
+            ffmpeg \
+            libsdl2-dev \
+            libsdl2-image-dev \
+            libsdl2-mixer-dev \
+            libsdl2-ttf-dev \
+            libportmidi-dev \
+            libswscale-dev \
+            libavformat-dev \
+            libavcodec-dev \
+            zlib1g-dev \
+            openjdk-8-jdk \
+            autoconf \
+            libtool \
+            pkg-config \
+            zlib1g-dev \
+            libncurses5-dev \
+            libncursesw5-dev \
+            libtinfo5 \
+            cmake
           
-      - name: Build APK in Docker
+      - name: Install Python packages
         script: |
-          docker run --volume "$(pwd)":/home/user/hostcwd kivy/buildozer bash -c "cd /home/user/hostcwd && buildozer android debug"
+          python3 -m pip install --upgrade pip
+          python3 -m pip install --upgrade Cython==0.29.33
+          python3 -m pip install --upgrade buildozer==1.5.0
+          python3 -m pip install --upgrade virtualenv
+          
+      - name: Debug Info
+        script: |
+          echo "Python version:"
+          python3 --version
+          echo "Pip version:"
+          pip --version
+          echo "Current directory:"
+          pwd
+          echo "Directory contents:"
+          ls -la
+          
+      - name: Build APK
+        script: |
+          buildozer android debug -v
           
     artifacts:
       - bin/*.apk
+      - $HOME/.buildozer/android/platform/android-sdk/platform-tools/adb
